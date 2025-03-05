@@ -19,25 +19,25 @@
   <meta name="author" content="Zizhu">
   <meta name="keywords" content="">
   
-    <meta name="description" content="关于Pikachu靶场的全通关流程，环境配置。">
+    <meta name="description" content="关于Pikachu靶场的全通关流程，burp和爆破关卡。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Pikachu靶场全通关（一）">
-<meta property="og:url" content="http://example.com/2025/03/05/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:title" content="Pikachu靶场全通关（二）">
+<meta property="og:url" content="http://example.com/2025/03/05/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
 <meta property="og:site_name" content="学习笔记">
-<meta property="og:description" content="关于Pikachu靶场的全通关流程，环境配置。">
+<meta property="og:description" content="关于Pikachu靶场的全通关流程，burp和爆破关卡。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89.jpg">
-<meta property="article:published_time" content="2025-03-05T11:15:12.000Z">
-<meta property="article:modified_time" content="2025-03-05T12:38:15.902Z">
+<meta property="og:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89.jpg">
+<meta property="article:published_time" content="2025-03-05T12:36:32.000Z">
+<meta property="article:modified_time" content="2025-03-05T14:23:12.847Z">
 <meta property="article:author" content="Zizhu">
 <meta property="article:tag" content="实践">
 <meta property="article:tag" content="靶场">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89.jpg">
+<meta name="twitter:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89.jpg">
   
   
   
-  <title>Pikachu靶场全通关（一） - 学习笔记</title>
+  <title>Pikachu靶场全通关（二） - 学习笔记</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -203,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Pikachu靶场全通关（一）"></span>
+            <span id="subtitle" data-typed-text="Pikachu靶场全通关（二）"></span>
           
         </div>
 
@@ -214,7 +214,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-03-05 19:15" pubdate>
+        <time datetime="2025-03-05 20:36" pubdate>
           2025年3月5日 晚上
         </time>
       </span>
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          169 字
+          637 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          2 分钟
+          6 分钟
         
       </span>
     
@@ -274,66 +274,151 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Pikachu靶场全通关（一）</h1>
+            <h1 id="seo-header">Pikachu靶场全通关（二）</h1>
             
             
               <div class="markdown-body">
                 
-                <h3 id="1、下载并配置PIkachu"><a href="#1、下载并配置PIkachu" class="headerlink" title="1、下载并配置PIkachu"></a>1、下载并配置PIkachu</h3><h4 id="（1）、环境要求"><a href="#（1）、环境要求" class="headerlink" title="（1）、环境要求"></a>（1）、环境要求</h4><ul>
-<li>win11</li>
-<li>pikahcu</li>
-<li>PHP study</li>
-</ul>
-<h4 id="（2）、下载链接"><a href="#（2）、下载链接" class="headerlink" title="（2）、下载链接"></a>（2）、下载链接</h4><ul>
-<li><p>pikachu下载链接：<a target="_blank" rel="noopener" href="https://github.com/zhuifengshaonianhanlu/pikachu">https://github.com/zhuifengshaonianhanlu/pikachu</a></p>
+                <h3 id="1、burp下载和Firefox配置"><a href="#1、burp下载和Firefox配置" class="headerlink" title="1、burp下载和Firefox配置"></a>1、burp下载和Firefox配置</h3><h4 id="（1）、Java环境配置"><a href="#（1）、Java环境配置" class="headerlink" title="（1）、Java环境配置"></a>（1）、Java环境配置</h4><ul>
+<li><p>官网下载Javajre或者Javajdk：<a target="_blank" rel="noopener" href="https://www.java.com/zh-CN/">https://www.java.com/zh-CN/</a></p>
 </li>
-<li><p>PHP study下载：<a target="_blank" rel="noopener" href="https://www.xp.cn/">https://www.xp.cn/</a></p>
+<li><p>正常安装即可。</p>
+</li>
+<li><p>复制Java地址准备配置环境变量：</p>
 </li>
 </ul>
-<h4 id="（3）、PHP-study安装与配置"><a href="#（3）、PHP-study安装与配置" class="headerlink" title="（3）、PHP study安装与配置"></a>（3）、PHP study安装与配置</h4><ul>
-<li><p>PHP study安装：官网下载后正常安装即可</p>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/php%E4%B8%8B%E8%BD%BD.png" srcset="/img/dog.gif" lazyload alt="PHP study下载"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/Javajre.png" srcset="/img/dog.gif" lazyload alt="Javajre"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/Javabin.png" srcset="/img/dog.gif" lazyload alt="Javabin"></p>
+<ul>
+<li>配置环境变量：</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" srcset="/img/dog.gif" lazyload alt="环境变量"></p>
+<p>和配置MySQL的大致相同，将两个地址均复制进去，确认即可。</p>
+<ul>
+<li><p>cmd输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">java<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/cmd%E6%AD%A3%E7%A1%AE.png" srcset="/img/dog.gif" lazyload alt="cmd正确"></p>
 </li>
-<li><p>小皮配置界面：</p>
+</ul>
+<h4 id="（2）、下载burp"><a href="#（2）、下载burp" class="headerlink" title="（2）、下载burp"></a>（2）、下载burp</h4><ul>
+<li><p>官网下载：<a target="_blank" rel="noopener" href="https://portswigger.net/burp">https://portswigger.net/burp</a></p>
+</li>
+<li><p>正常安装即可</p>
 </li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E5%B0%8F%E7%9A%AE%E4%B8%BB%E7%95%8C%E9%9D%A2.png" srcset="/img/dog.gif" lazyload alt="PHP study下载"></p>
+<h4 id="（3）、Firefox的代理设置"><a href="#（3）、Firefox的代理设置" class="headerlink" title="（3）、Firefox的代理设置"></a>（3）、Firefox的代理设置</h4><ul>
+<li>burp的监听器端口默认为：</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E7%9B%91%E5%90%AC%E5%99%A8.png" srcset="/img/dog.gif" lazyload alt="监听器"></p>
 <ul>
-<li>MySQL环境变量配置：</li>
+<li>Firefox手动代理为：</li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE.png" srcset="/img/dog.gif" lazyload alt="文件位置"></p>
-<p><img src="/../img%5CPikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89%5C%E6%96%87%E4%BB%B6%E5%9C%B0%E5%9D%80.png" srcset="/img/dog.gif" lazyload alt="文件地址"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%89%8B%E5%8A%A8%E4%BB%A3%E7%90%86.png" srcset="/img/dog.gif" lazyload alt="手动代理"></p>
 <ul>
-<li>右键此电脑——》属性——》高级系统设置——》环境变量——》选择系统变量当中的PATH——》新建——》复制粘贴——》确认</li>
+<li>也可选择不使用代理服务器，下载插件FoxyProxy，进行设置即可：</li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E6%AD%A5%E9%AA%A4.png" srcset="/img/dog.gif" lazyload alt="步骤"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%8F%92%E4%BB%B6%E8%AE%BE%E7%BD%AE.png" srcset="/img/dog.gif" lazyload alt="插件设置"></p>
 <ul>
-<li><p>打开cmd，输入：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mysql -uroot -p<br></code></pre></td></tr></table></figure></li>
+<li>打开扩展即可抓包</li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/cmd%E6%88%90%E5%8A%9F%E7%95%8C%E9%9D%A2.png" srcset="/img/dog.gif" lazyload alt="cmd成功界面"></p>
-<p>数据库默认密码为root</p>
-<h4 id="（4）、pikachu靶场配置"><a href="#（4）、pikachu靶场配置" class="headerlink" title="（4）、pikachu靶场配置"></a>（4）、pikachu靶场配置</h4><ul>
-<li>下载pikachu：</li>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%89%93%E5%BC%80%E6%89%A9%E5%B1%95.png" srcset="/img/dog.gif" lazyload alt="打开扩展"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%8A%93%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="抓包"></p>
+<h4 id="（4）、关于HTTPS的包如何抓取"><a href="#（4）、关于HTTPS的包如何抓取" class="headerlink" title="（4）、关于HTTPS的包如何抓取"></a>（4）、关于HTTPS的包如何抓取</h4><ul>
+<li>打开burp导出证书</li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/pikachu%E4%B8%8B%E8%BD%BD.png" srcset="/img/dog.gif" lazyload alt="pikachu下载"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E5%AF%BC%E5%87%BAca.png" srcset="/img/dog.gif" lazyload alt="导出ca"></p>
 <ul>
-<li>解压至该目录：</li>
+<li>在Firefox当中导入证书即可</li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E5%AE%89%E8%A3%85%E4%BD%8D%E7%BD%AE.png" srcset="/img/dog.gif" lazyload alt="安装位置"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E5%AF%BC%E5%85%A5%E8%AF%81%E4%B9%A6.png" srcset="/img/dog.gif" lazyload alt="导入证书"></p>
+<h3 id="2、关于pikahcu爆破关卡的解法和通关"><a href="#2、关于pikahcu爆破关卡的解法和通关" class="headerlink" title="2、关于pikahcu爆破关卡的解法和通关"></a>2、关于pikahcu爆破关卡的解法和通关</h3><h4 id="（1）、基于单表的暴力破解"><a href="#（1）、基于单表的暴力破解" class="headerlink" title="（1）、基于单表的暴力破解"></a>（1）、基于单表的暴力破解</h4><ul>
+<li>随便输入一两个数字进行抓包</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E7%88%86%E7%A0%B4.png" srcset="/img/dog.gif" lazyload alt="抓包"></p>
 <ul>
-<li>修改pikachu的配置：</li>
+<li>CTRL+I或者右键点击进入后，先进行清除，然后分别选取用户名和密码进行添加</li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE.png" srcset="/img/dog.gif" lazyload alt="修改配置"></p>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81.png" srcset="/img/dog.gif" lazyload alt="修改用户名密码"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%B8%85%E9%99%A4%E5%90%8E%E6%B7%BB%E5%8A%A0.png" srcset="/img/dog.gif" lazyload alt="清除后添加"></p>
 <ul>
-<li>使用小皮进行网站配置：</li>
+<li>选择攻击类型</li>
 </ul>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E5%88%9B%E5%BB%BA%E7%BD%91%E7%AB%99.png" srcset="/img/dog.gif" lazyload alt="创建网站"></p>
-<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2.png" srcset="/img/dog.gif" lazyload alt="配置界面"></p>
-<h4 id="（5）、安装和初始化"><a href="#（5）、安装和初始化" class="headerlink" title="（5）、安装和初始化"></a>（5）、安装和初始化</h4><ul>
-<li>打开网站，点击安装和初始化即可。</li>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E9%80%89%E6%8B%A9%E6%94%BB%E5%87%BB%E7%B1%BB%E5%9E%8B.png" srcset="/img/dog.gif" lazyload alt="选择攻击类型"></p>
+<ul>
+<li>开始攻击，分别添加用户名和密码的字典</li>
 </ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7%E5%90%8D.png" srcset="/img/dog.gif" lazyload alt="添加用户名"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%B7%BB%E5%8A%A0%E5%AF%86%E7%A0%81.png" srcset="/img/dog.gif" lazyload alt="添加密码"></p>
+<ul>
+<li>观察其中长度和其他不同的用户名和密码</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E8%A7%82%E5%AF%9F%E4%B8%8D%E5%90%8C.png" srcset="/img/dog.gif" lazyload alt="观察不同"></p>
+<ul>
+<li>停止攻击输入用户名和密码</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%88%90%E5%8A%9F.png" srcset="/img/dog.gif" lazyload alt="成功"></p>
+<ul>
+<li>得到用户名和密码为</li>
+</ul>
+<p>admin&#x2F;123456                pikachu&#x2F;000000                test&#x2F;abc123</p>
+<h4 id="（2）、验证码绕过-on-server"><a href="#（2）、验证码绕过-on-server" class="headerlink" title="（2）、验证码绕过(on server)"></a>（2）、验证码绕过(on server)</h4><ul>
+<li>抓包后按照第一关的样子继续攻击即可，主要因为验证码只会在当前界面刷新之后才会继续刷新。</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E4%B8%8D%E5%8F%98%E9%AA%8C%E8%AF%81%E7%A0%81%E6%8A%93%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="不变验证码抓包"></p>
+<h4 id="（3）、验证码绕过-on-server"><a href="#（3）、验证码绕过-on-server" class="headerlink" title="（3）、验证码绕过(on server)"></a>（3）、验证码绕过(on server)</h4><ul>
+<li>输入一个错误验证码，发现会产生一个弹窗</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E9%94%99%E8%AF%AF%E9%AA%8C%E8%AF%81%E7%A0%81.png" srcset="/img/dog.gif" lazyload alt="错误验证码"></p>
+<ul>
+<li>F12查看源代码</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%BA%90%E4%BB%A3%E7%A0%81.png" srcset="/img/dog.gif" lazyload alt="源代码"></p>
+<ul>
+<li>发现是在前端之后，直接F1禁用即可</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E7%A6%81%E7%94%A8JavaScript.png" srcset="/img/dog.gif" lazyload alt="禁用JavaScript"></p>
+<ul>
+<li>之后的步骤同上，进行爆破即可</li>
+</ul>
+<h4 id="（4）、token防爆破"><a href="#（4）、token防爆破" class="headerlink" title="（4）、token防爆破?"></a>（4）、token防爆破?</h4><ul>
+<li>查看token</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/token.png" srcset="/img/dog.gif" lazyload alt="token"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-string">&quot;token&quot;</span>通常指的是一个用于验证用户身份和授权访问的令牌。它是一种特殊的字符串或代码，由服务器生成并分配给经过身份验证的用户。用户在成功登录后，服务器会颁发一个token给客户端（例如Web浏览器），客户端将在随后的请求中将该token作为身份验证凭据发送给服务器。<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>抓包</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/token%E6%8A%93%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="token抓包"></p>
+<ul>
+<li>攻击类型</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/token%E6%94%BB%E5%87%BB%E7%B1%BB%E5%9E%8B.png" srcset="/img/dog.gif" lazyload alt="token攻击类型"></p>
+<ul>
+<li>选择密码和token进行添加，密码按照之前设置，token如下</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/token%E8%AE%BE%E7%BD%AE.png" srcset="/img/dog.gif" lazyload alt="token设置"></p>
+<p>点击添加（add）——》重新获得回复（refetch response）</p>
+<ul>
+<li>下方搜索框搜索token，选中、复制、OK</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E9%80%89%E4%B8%AD%E5%90%8Eok.png" srcset="/img/dog.gif" lazyload alt="选中复制ok"></p>
+<ul>
+<li>返回payloads，选择token的payloads，将复制好的token粘贴到payloads settings</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/token%E7%9A%84%E8%BD%BD%E8%8D%B7.png" srcset="/img/dog.gif" lazyload alt="token的payloads设置"></p>
+<ul>
+<li>若攻击时报错</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%94%BB%E5%87%BB%E6%97%B6%E6%8A%A5%E9%94%99.png" srcset="/img/dog.gif" lazyload alt="攻击时报错"></p>
+<ul>
+<li>将资源池（Resource Pool）线程数改为1，有些版本在设置当中修改</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E8%B5%84%E6%BA%90%E6%B1%A0.png" srcset="/img/dog.gif" lazyload alt="资源池"></p>
+<ul>
+<li>成功攻击</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/%E6%94%BB%E5%87%BB%E6%88%90%E5%8A%9F.png" srcset="/img/dog.gif" lazyload alt="攻击成功"></p>
 
                 
               </div>
@@ -381,8 +466,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Pikachu靶场全通关（一）</div>
-      <div>http://example.com/2025/03/05/Pikachu靶场全通关（一）/</div>
+      <div>Pikachu靶场全通关（二）</div>
+      <div>http://example.com/2025/03/05/Pikachu靶场全通关（二）/</div>
     </div>
     <div class="license-meta">
       
@@ -426,18 +511,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/03/05/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/" title="Pikachu靶场全通关（二）">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Pikachu靶场全通关（二）</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/03/01/%E5%85%B3%E4%BA%8E%E4%BD%BF%E7%94%A8hexo%E5%92%8CGitHub%E5%88%9B%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" title="关于使用hexo和GitHub创建个人博客">
-                        <span class="hidden-mobile">关于使用hexo和GitHub创建个人博客</span>
+                      <a href="/2025/03/05/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%80%EF%BC%89/" title="Pikachu靶场全通关（一）">
+                        <span class="hidden-mobile">Pikachu靶场全通关（一）</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
