@@ -1,0 +1,915 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/girl.jpg">
+  <link rel="icon" href="/img/girl.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Zizhu">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="关于Pikachu靶场的全通关流程，XSS漏洞。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pikachu靶场全通关（三）">
+<meta property="og:url" content="http://example.com/2025/03/06/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/index.html">
+<meta property="og:site_name" content="学习笔记">
+<meta property="og:description" content="关于Pikachu靶场的全通关流程，XSS漏洞。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89.jpg">
+<meta property="article:published_time" content="2025-03-06T14:17:36.000Z">
+<meta property="article:modified_time" content="2025-03-09T08:48:43.521Z">
+<meta property="article:author" content="Zizhu">
+<meta property="article:tag" content="实践">
+<meta property="article:tag" content="靶场">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89.jpg">
+  
+  
+  
+  <title>Pikachu靶场全通关（三） - 学习笔记</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/dog.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zizhu</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wenzhang.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Pikachu靶场全通关（三）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-06 22:17" pubdate>
+          2025年3月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Pikachu靶场全通关（三）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="XSS漏洞"><a href="#XSS漏洞" class="headerlink" title="XSS漏洞"></a>XSS漏洞</h3><h4 id="（1）、XSS（跨站脚本）概述"><a href="#（1）、XSS（跨站脚本）概述" class="headerlink" title="（1）、XSS（跨站脚本）概述"></a>（1）、XSS（跨站脚本）概述</h4><p>Cross-Site Scripting 简称为“CSS”，为避免与前端叠成样式表的缩写”CSS”冲突，故又称XSS。一般XSS可以分为如下几种常见类型：</p>
+<p><strong>1.反射性XSS;</strong></p>
+<p><strong>2.存储型XSS;</strong></p>
+<p><strong>3.DOM型XSS;</strong></p>
+<p>XSS漏洞一直被评估为web漏洞中危害较大的漏洞，在OWASP TOP10的排名中一直属于前三的江湖地位。<br>XSS是一种发生在前端浏览器端的漏洞，所以其危害的对象也是前端用户。<br>形成XSS漏洞的主要原因是程序对输入和输出没有做合适的处理，导致“精心构造”的字符输出在前端时被浏览器当作有效代码解析执行从而产生危害。<br>因此在XSS漏洞的防范上，一般会采用“对输入进行过滤”和“输出进行转义”的方式进行处理:<br>  输入过滤：对输入进行过滤，不允许可能导致XSS攻击的字符输入;<br>  输出转义：根据输出点的位置对输出到前端的内容进行适当转义;</p>
+<h4 id="（2）、关于XSS的本质（ds给出的建议，可以适当看看）"><a href="#（2）、关于XSS的本质（ds给出的建议，可以适当看看）" class="headerlink" title="（2）、关于XSS的本质（ds给出的建议，可以适当看看）"></a>（2）、关于XSS的本质（ds给出的建议，可以适当看看）</h4><h5 id="一、思维实验：浏览器的「语言体系」（底层逻辑）"><a href="#一、思维实验：浏览器的「语言体系」（底层逻辑）" class="headerlink" title="一、思维实验：浏览器的「语言体系」（底层逻辑）"></a>一、思维实验：浏览器的「语言体系」（底层逻辑）</h5><p>假设浏览器是一个<strong>多语言翻译器</strong>，它需要处理三类语言：</p>
+<ol>
+<li><strong>HTML 语法</strong>：<code>&lt;div&gt;</code>, <code>&lt;script&gt;</code> 等标签</li>
+<li><strong>CSS 语法</strong>：<code>color: red;</code> 等样式</li>
+<li><strong>JavaScript 动态语言</strong>：<code>alert(1)</code> 等逻辑</li>
+</ol>
+<p>关键点：<strong>当用户输入的内容突破原有语法边界，混入非法语法时，就会发生代码注入</strong><br> （这就是所有前端漏洞的本质：<strong>越界污染语法</strong>）</p>
+<hr>
+<h5 id="二、XSS-的致命条件（核心原理）"><a href="#二、XSS-的致命条件（核心原理）" class="headerlink" title="二、XSS 的致命条件（核心原理）"></a>二、XSS 的致命条件（核心原理）</h5><p>攻击者需要实现：<br> <strong>用户可控输入 → 未经净化 → 被浏览器解析为有效语法</strong></p>
+<p>你需要像一个侦探一样，寻找三条线索的<strong>交集点</strong>：</p>
+<ol>
+<li><strong>哪里接受外部输入？</strong>（搜索框、URL参数、表单提交…）</li>
+<li><strong>哪里缺少过滤&#x2F;转义？</strong>（尖括号转义？引号闭合？）</li>
+<li><strong>哪里会被浏览器误解析？</strong>（HTML&#x2F;JS&#x2F;CSS 上下文？）</li>
+</ol>
+<hr>
+<h5 id="三、实战思考框架（方法论）"><a href="#三、实战思考框架（方法论）" class="headerlink" title="三、实战思考框架（方法论）"></a>三、实战思考框架（方法论）</h5><p>假设你发现了一个评论区可以输入内容，试试这种自问模式：</p>
+<h6 id="█-第一阶段：探针测试"><a href="#█-第一阶段：探针测试" class="headerlink" title="█ 第一阶段：探针测试"></a>█ 第一阶段：探针测试</h6><ol>
+<li><strong>测试边界符</strong>：输入 <code>&quot;&gt;&lt;&#39;</code> 观察页面是否被破坏？（检查能否闭合原有语法）</li>
+<li><strong>探测解析上下文</strong>：<ul>
+<li>输入 <code>&lt;b&gt;hello&lt;/b&gt;</code> → 若显示加粗文本，说明处于<strong>HTML 上下文</strong></li>
+<li>输入 <code>&#39;;alert(1);//</code> → 若弹窗，说明处于<strong>JS 上下文</strong></li>
+<li>输入 <code>color:red;x:expression(alert(1))</code> → 若样式生效，说明处于<strong>CSS 上下文</strong></li>
+</ul>
+</li>
+</ol>
+<h6 id="█-第二阶段：思考攻击路径（经典场景举例）"><a href="#█-第二阶段：思考攻击路径（经典场景举例）" class="headerlink" title="█ 第二阶段：思考攻击路径（经典场景举例）"></a>█ 第二阶段：思考攻击路径（经典场景举例）</h6><ol>
+<li><p><strong>反射型案例</strong>：</p>
+<URL>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml">https://xxx.com/search?q=<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>攻击链</strong>：用户点击 URL → 服务器返回含恶意脚本的页面 → 脚本执行</li>
+</ul>
+</li>
+<li><p><strong>存储型案例</strong>：</p>
+<HTML>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">用户评论区输入：&lt;img <span class="hljs-attribute">src</span>=x <span class="hljs-attribute">onerror</span>=stealCookie()&gt;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>攻击链</strong>：恶意代码存入数据库 → 所有用户访问页面时自动触发</li>
+</ul>
+</li>
+<li><p><strong>DOM 型案例</strong>：</p>
+<JAVASCRIPT>
+
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">// 页面有代码：document.<span class="hljs-built_in">write</span>(location.hash.substring(<span class="hljs-number">1</span>))攻击者构造 <span class="hljs-built_in">URL</span>：<span class="hljs-keyword">https</span>://xxx.com<span class="hljs-comment">#&lt;img src=x onerror=alert(1)&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>攻击链</strong>：前端JS直接使用用户输入 → 未经服务端干预即解析</li>
+</ul>
+</li>
+</ol>
+<h6 id="█-第三阶段：绕过防御的元思考"><a href="#█-第三阶段：绕过防御的元思考" class="headerlink" title="█ 第三阶段：绕过防御的元思考"></a>█ 第三阶段：绕过防御的元思考</h6><p>当看到过滤器时，思考它的<strong>逻辑漏洞</strong>而非盲目尝试 payload：</p>
+<ol>
+<li><strong>黑名单过滤？</strong> → 尝试不常用的标签属性<br> （例如用 <code>&lt;svg/onload=alert(1)&gt;</code> 代替 <code>&lt;script&gt;</code>）</li>
+<li><strong>转义引号？</strong> → 尝试不用引号的写法<br> （例如 <code>onerror=alert(document.domain)</code>）</li>
+<li><strong>内容安全策略（CSP）？</strong> → 分析 <code>script-src</code> 限制<br> （如果有 <code>unsafe-eval</code>，可利用 <code>eval(&#39;al&#39;+&#39;ert(1)&#39;)</code>）</li>
+</ol>
+<hr>
+<h5 id="四、技术纵深（理解现代防御体系）"><a href="#四、技术纵深（理解现代防御体系）" class="headerlink" title="四、技术纵深（理解现代防御体系）"></a>四、技术纵深（理解现代防御体系）</h5><p>理解防御原理能反向提升攻击思维：</p>
+<ol>
+<li><strong>输入过滤 vs 输出编码</strong>：<ul>
+<li>前端过滤是可绕过的（禁用JS即可绕过）</li>
+<li>后端输出的上下文感知编码才是关键（例如在 HTML 中用 <code>&lt;</code>，在 JS 中用 <code>\x3c</code>）</li>
+</ul>
+</li>
+<li><strong>CSP 的本质</strong>：<br> 它是白名单协议，通过响应头声明哪些资源可信<br> （突破点：寻找允许<code>unsafe-inline</code> 或域名白名单过宽的情况）</li>
+<li><strong>Trusted Types API</strong>：<br> 新一代防御方案，强制类型检查所有危险操作（如 innerHTML）<br> （突破点：寻找未受保护的危险 sink）</li>
+</ol>
+<hr>
+<h5 id="五、培养创造性思维的刻意练习"><a href="#五、培养创造性思维的刻意练习" class="headerlink" title="五、培养创造性思维的刻意练习"></a>五、培养创造性思维的刻意练习</h5><ol>
+<li><p><strong>搭建实验环境</strong>：<br> 使用在线沙盒（如 CodePen、JSFiddle）或本地运行 Express 服务器，尝试构造各种场景的 XSS</p>
+</li>
+<li><p><strong>CTF 靶场实战</strong>：<br> 推荐 PortSwigger 的 XSS Labs（从易到难层层递进，附带原理解析）<br> 地址：<a target="_blank" rel="noopener" href="https://portswigger.net/web-security/all-labs#cross-site-scripting">https://portswigger.net/web-security/all-labs#cross-site-scripting</a></p>
+</li>
+<li><p><strong>阅读浏览器标准</strong>：<br> 重点学习：</p>
+<ul>
+<li>HTML 解析算法（如何处理畸形标签）</li>
+<li>JavaScript 执行上下文（事件处理器的作用域）</li>
+</ul>
+</li>
+<li><p><strong>调试器思维</strong>：<br> Chrome DevTools 必杀技：</p>
+<JAVASCRIPT>
+
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> 在控制台查看 DOM 修改记录monitor(document.body.appendChild)<span class="hljs-regexp">//</span> 查看所有事件监听器getEventListeners(document)<br></code></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p>常见误区：<br> ⚠️ <strong>过度关注 payload 库</strong> → 应理解 payload 背后的构造逻辑<br> ✅ <strong>正确姿势</strong>：每次遇到过滤器时，画流程图分析输入数据的完整生命周期</p>
+<hr>
+<p>最终的境界应该是：<strong>如同编译器般理解输入是如何被解析的</strong>。通过这种思维方式，即使是新出现的防御机制，你也能快速定位其逻辑盲点。如果想要具体案例拆解，可以告诉我你的目标场景（如某 CMS 系统、某种框架），我可以为你定制分析路线图。</p>
+<h4 id="（3）、反射型xss-get"><a href="#（3）、反射型xss-get" class="headerlink" title="（3）、反射型xss(get)"></a>（3）、反射型xss(get)</h4><ul>
+<li>首先，我们需要构造一个xss的payload，如：</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-string">&#x27;xss&#x27;</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/payload%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6.png" srcset="/img/dog.gif" lazyload alt="payload长度限制"></p>
+<p>我们发现这个payload的长度被限制了。</p>
+<ul>
+<li>我们按F12，定位到该输入框，修改长度为100即可</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E4%BF%AE%E6%94%B9%E6%9C%80%E5%A4%A7%E9%95%BF%E5%BA%A6.png" srcset="/img/dog.gif" lazyload alt="修改最大长度"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%8F%8D%E5%B0%84%E6%80%A7xss(get)%E6%88%90%E5%8A%9F.png" srcset="/img/dog.gif" lazyload alt="反射性xss(get)成功"></p>
+<h4 id="（4）、反射性xss-post"><a href="#（4）、反射性xss-post" class="headerlink" title="（4）、反射性xss(post)"></a>（4）、反射性xss(post)</h4><ul>
+<li>同样，我们还是构建使用相同的payload</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-string">&#x27;xss&#x27;</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>不过这里我们要输入用户名和密码，这里的用户名和密码就是我们前面暴力破解得到的用户名和密码。</p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E8%BE%93%E5%85%A5%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E5%AF%86%E7%A0%81.png" srcset="/img/dog.gif" lazyload alt="输入用户名和密码"></p>
+<ul>
+<li>然后我们输入payload，观察url</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/post%E5%9E%8B%E7%9A%84url.png" srcset="/img/dog.gif" lazyload alt="post型的url"></p>
+<p>这是post型的url。</p>
+<ul>
+<li>get型的url</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/get%E5%9E%8B%E7%9A%84url.png" srcset="/img/dog.gif" lazyload alt="get型的url"></p>
+<p>这就是二者所不同的地方。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>GET型请求</th>
+<th>POST型请求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>参数位置</strong></td>
+<td>URL地址栏（明文可见）</td>
+<td>请求体内（不可见）</td>
+</tr>
+<tr>
+<td><strong>典型应用</strong></td>
+<td>数据获取（搜索&#x2F;页面跳转）</td>
+<td>数据提交（登录&#x2F;表单操作）</td>
+</tr>
+<tr>
+<td><strong>长度限制</strong></td>
+<td>受URL长度限制（约2083字符）</td>
+<td>无明确限制</td>
+</tr>
+<tr>
+<td><strong>缓存记录</strong></td>
+<td>会被浏览器&#x2F;服务器日志留存</td>
+<td>默认不缓存</td>
+</tr>
+<tr>
+<td><strong>XSS触发点</strong></td>
+<td>常见于反射型XSS</td>
+<td>常见于存储型或DOM型XSS</td>
+</tr>
+<tr>
+<td><strong>攻击难度</strong></td>
+<td>低（直接构造恶意链接）</td>
+<td>高（需诱导用户提交表单）</td>
+</tr>
+<tr>
+<td><strong>参数可见性</strong></td>
+<td>参数完全暴露</td>
+<td>需抓包工具才能查看</td>
+</tr>
+</tbody></table>
+<h4 id="（5）、存储型XSS"><a href="#（5）、存储型XSS" class="headerlink" title="（5）、存储型XSS"></a>（5）、存储型XSS</h4><ul>
+<li>payload</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-string">&#x27;xss&#x27;</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%AD%98%E5%82%A8%E5%9E%8Bxss.png" srcset="/img/dog.gif" lazyload alt="存储型xss"></p>
+<p>切换回来时也会有弹窗，证明被存储下来了。</p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%88%87%E6%8D%A2%E5%9B%9E%E6%9D%A5%E6%97%B6%E4%B9%9F%E6%9C%89%E5%BC%B9%E7%AA%97.png" srcset="/img/dog.gif" lazyload alt="切换回来时也有弹窗"></p>
+<h4 id="（6）、DOM型xss"><a href="#（6）、DOM型xss" class="headerlink" title="（6）、DOM型xss"></a>（6）、DOM型xss</h4><ul>
+<li>首先随意输入一串字符，F12找到字符所在的位置</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/dom%E5%89%8D%E7%AB%AF.png" srcset="/img/dog.gif" lazyload alt="dom前端"></p>
+<ul>
+<li>构造payload进行闭合</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">&#x27; onclick=alert(&#x27;xss&#x27;)&gt;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/dom%E5%9E%8B%E6%98%BE%E7%A4%BAxss.png" srcset="/img/dog.gif" lazyload alt="dom型显示xss"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/dom%E5%9E%8B-x%E7%9B%B8%E5%90%8C%EF%BC%8C%E5%A4%9A%E7%82%B9%E4%B8%80%E4%B8%8B.png" srcset="/img/dog.gif" lazyload alt="dom型-x相同，多点一下"></p>
+<h4 id="（7）、xss盲打"><a href="#（7）、xss盲打" class="headerlink" title="（7）、xss盲打"></a>（7）、xss盲打</h4><ul>
+<li>顾名思义前端无法得知是否实现xss，需要到后台才能得知</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/xss%E7%9B%B2%E6%89%93.png" srcset="/img/dog.gif" lazyload alt="xss盲打"></p>
+<ul>
+<li>根据提示，跳转到后台，发现进行了弹窗</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%90%8E%E5%8F%B0%E5%BC%B9%E7%AA%97.png" srcset="/img/dog.gif" lazyload alt="后台弹窗"></p>
+<h4 id="（8）、xss之过滤"><a href="#（8）、xss之过滤" class="headerlink" title="（8）、xss之过滤"></a>（8）、xss之过滤</h4><ul>
+<li>首先先进行尝试，使用原来的payload</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-string">&#x27;xss&#x27;</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E6%8F%90%E4%BA%A4payload%E8%A7%82%E5%AF%9F.png" srcset="/img/dog.gif" lazyload alt="提交payload观察"></p>
+<p>发现不对，似乎是被过滤掉了。</p>
+<ul>
+<li>继续尝试</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%B0%9D%E8%AF%95.png" srcset="/img/dog.gif" lazyload alt="尝试"></p>
+<p>发现是<code>&lt;script&gt;</code>标签被过滤了。</p>
+<ul>
+<li>构造其他的payload来绕过</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;&quot;</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">&quot;alert(&#x27;xss&#x27;)&quot;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E7%BB%95%E8%BF%87.png" srcset="/img/dog.gif" lazyload alt="绕过"></p>
+<ul>
+<li>实现</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%AE%9E%E7%8E%B0.png" srcset="/img/dog.gif" lazyload alt="实现"></p>
+<h4 id="（9）、xss之htmlspecialchars"><a href="#（9）、xss之htmlspecialchars" class="headerlink" title="（9）、xss之htmlspecialchars"></a>（9）、xss之htmlspecialchars</h4><ul>
+<li>首先还是尝试原来的payload</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-string">&#x27;xss&#x27;</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E7%BB%A7%E7%BB%AD%E5%B0%9D%E8%AF%95.png" srcset="/img/dog.gif" lazyload alt="继续尝试"></p>
+<ul>
+<li>发现没什么效果</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E6%B2%A1%E6%9C%89%E6%95%88%E6%9E%9C.png" srcset="/img/dog.gif" lazyload alt="没有效果"></p>
+<ul>
+<li>F12找到对应的标签</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E6%89%BE%E5%88%B0%E5%9C%B0%E6%96%B9.png" srcset="/img/dog.gif" lazyload alt="找到地方"></p>
+<ul>
+<li>利用&lt;a标签进行构造</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">&#x27; onclick=&#x27;alert(&quot;xss&quot;)<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%88%A9%E7%94%A8a%E6%A0%87%E7%AD%BE%E6%9E%84%E9%80%A0.png" srcset="/img/dog.gif" lazyload alt="利用a标签构造"></p>
+<h4 id="（10）、xss之href输出"><a href="#（10）、xss之href输出" class="headerlink" title="（10）、xss之href输出"></a>（10）、xss之href输出</h4><ul>
+<li>还是继续尝试</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%B0%9D%E8%AF%95%E7%AE%80%E5%8D%95%E7%9A%84.png" srcset="/img/dog.gif" lazyload alt="尝试简单的"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%88%A9%E7%94%A8a%E6%A0%87%E7%AD%BE.png" srcset="/img/dog.gif" lazyload alt="利用a标签"></p>
+<ul>
+<li>发现这两个都不行，使用js</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-attr">javascript</span>:<span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E4%BD%BF%E7%94%A8js.png" srcset="/img/dog.gif" lazyload alt="使用js"></p>
+<ul>
+<li>顺利完成</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E9%A1%BA%E5%88%A9%E5%AE%8C%E6%88%90.png" srcset="/img/dog.gif" lazyload alt="顺利完成"></p>
+<h4 id="（11）、xss之js输出"><a href="#（11）、xss之js输出" class="headerlink" title="（11）、xss之js输出"></a>（11）、xss之js输出</h4><ul>
+<li>尝试先前的</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E5%B0%9D%E8%AF%95%E4%B9%8B%E5%89%8D%E7%9A%84.png" srcset="/img/dog.gif" lazyload alt="尝试之前的"></p>
+<ul>
+<li>发现没有效果，查看源代码</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E6%BA%90%E4%BB%A3%E7%A0%81.png" srcset="/img/dog.gif" lazyload alt="源代码"></p>
+<ul>
+<li>是因为对应关系有问题</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-string">&#x27;xss&#x27;</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/%E6%88%90%E5%8A%9F.png" srcset="/img/dog.gif" lazyload alt="成功"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98/" class="category-chain-item">靶场实战</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AE%9E%E8%B7%B5/" class="print-no-link">#实践</a>
+      
+        <a href="/tags/%E9%9D%B6%E5%9C%BA/" class="print-no-link">#靶场</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Pikachu靶场全通关（三）</div>
+      <div>http://example.com/2025/03/06/Pikachu靶场全通关（三）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Zizhu</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/05/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%BA%8C%EF%BC%89/" title="Pikachu靶场全通关（二）">
+                        <span class="hidden-mobile">Pikachu靶场全通关（二）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
